@@ -35,6 +35,8 @@ public class TipiPrimitivi {
         System.out.println(l);
         l=948934298374928743l;
         System.out.println(l);
+        long ll=c;
+        System.out.println(ll);
         float f=0.4f;
         System.out.println(f);
         double d=0.4;
