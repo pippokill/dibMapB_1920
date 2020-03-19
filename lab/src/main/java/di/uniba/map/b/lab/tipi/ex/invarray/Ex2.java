@@ -14,31 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package di.uniba.map.b.lab.istruzioni;
+package di.uniba.map.b.lab.tipi.ex.invarray;
 
 /**
  *
  * @author pierpaolo
  */
-public class EsempioFor {
+public class Ex2 {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        for (int i = 1; i < 11; i++) {
-            System.out.println("Count is: " + i);
+        int[] array = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int i = 0;
+        int appoggio = 0;
+        while (i < (array.length) / 2) {
+            appoggio = array[i];
+            array[i] = array[array.length - (i + 1)];
+            array[array.length - (i + 1)] = appoggio;
+            i++;
         }
-        System.out.println("======================");
-        //Esempi di for-each
-        int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        for (int item : numbers) {
-            System.out.println("Count is: " + item);
-        }
-        System.out.println("======================");
-        String[] s = new String[]{"Topolino", "Pluto", "Pippo", "Paperino"};
-        for (String e : s) {
-            System.out.println(e);
+        for (int item : array) {
+            System.out.println(item);
         }
     }
 
