@@ -23,7 +23,7 @@ package di.uniba.map.b.lab.stringheNumeri;
 public class StringBuilderDemo {
 
     public static void main(String[] args) {
-        StringBuilder sb=new StringBuilder("This");
+        StringBuilder sb = new StringBuilder("This");
         sb.append(" ").append("is ");
         sb.append("a string builder");
         System.out.println(sb.toString());
@@ -32,5 +32,9 @@ public class StringBuilderDemo {
         System.out.println(sb.toString());
         sb.delete(11, sb.length());
         System.out.println(sb.toString());
+        String palindrome = "Dot saw I was Tod";
+        StringBuilder sb1 = new StringBuilder(palindrome);
+        sb1.reverse(); // reverse it
+        System.out.println(sb1);
     }
 }
