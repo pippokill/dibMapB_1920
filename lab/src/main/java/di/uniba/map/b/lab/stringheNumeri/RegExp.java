@@ -16,6 +16,9 @@
  */
 package di.uniba.map.b.lab.stringheNumeri;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author pierpaolo
@@ -26,8 +29,19 @@ public class RegExp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String test="ssssssssss";
-        System.out.println(test.matches("s+"));
+        String test = "pippo..pi@topolino.it";
+        //System.out.println(test.matches("[A-Za-z][\\w]+\\.[A-Za-z][\\w]+@[\\w]+\\.[A-Za-z]{2,3}"));
+        System.out.println(test.matches("[a-zA-Z][a-z0-9]+(\\.)?[a-z0-9]+[@][a-z0-9]+\\.(com|it|org)"));
+        String test1="sdfkljsd lkjsd fkl    lksdjf   fslkdjf f  fsldkj";
+        String[] split = test1.split("\\s+");
+        for (String s:split) {
+            System.out.println(s);
+        }
+        Pattern pattern = Pattern.compile("[a-zA-Z]+");
+        Matcher matcher = pattern.matcher("lsdkjfdskl 32lk4j 23kl4 k3l24j 3k2l4 lk32");
+        while (matcher.find()) {
+            System.out.println(matcher.start()+"-"+matcher.end());
+        }
     }
-    
+
 }

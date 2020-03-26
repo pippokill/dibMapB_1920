@@ -26,7 +26,7 @@ public class StringBuilderDemo {
         StringBuilder sb = new StringBuilder("This");
         sb.append(" ").append("is ");
         sb.append("a string builder");
-        System.out.println(sb.toString());
+        System.out.println(sb);
         System.out.println(sb.reverse().toString());
         sb.insert(0, "New insert. ");
         System.out.println(sb.toString());

@@ -17,6 +17,7 @@
 package di.uniba.map.b.lab.collection;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -27,15 +28,14 @@ import java.util.ListIterator;
 public class EsempioList3 {
 
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
+        List<String> list = new LinkedList<>();
         list.add("a");
         list.add("b");
         list.add("c");
         list.add("a");
         list.add("z");
         list.add("h");
-        ListIterator<String> lit = list.listIterator(list.size()
-                - 1);
+        ListIterator<String> lit = list.listIterator(list.size());
         while (lit.hasPrevious()) {
             System.out.println(lit.previous());
         }
