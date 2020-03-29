@@ -23,12 +23,13 @@ import java.util.regex.Pattern;
  *
  * @author pierpaolo
  */
-public class RegExp {
+public class RegExpString {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.out.println("=== Es. MATCHES ===");
         String regexp = "[a-zA-Z]+";
         String test = "dfsdfswerwDFSDS";
         //verifica se una stringa corrisponde ad una espressione regolare
@@ -40,13 +41,11 @@ public class RegExp {
         for (String s : split) {
             System.out.println(s);
         }
-        System.out.println("=== Es. MATCHER ===");
-        //esempio Pattern/Matcher
-        Pattern pattern = Pattern.compile("[a-zA-Z]+");
-        Matcher matcher = pattern.matcher("lsdkjfdskl 32lk4j 23kl4 k3l24j 3k2l4 lk32");
-        while (matcher.find()) {
-            System.out.println(matcher.group() + ": " + matcher.start() + "-" + matcher.end());
-        }
+        System.out.println("=== Es. REPLACEALL ===");
+        //esempio di replaceAll
+        String test2 = "sdfkljsd824lkjsd76fkl2765lksdjf549fslkdjf";
+        String tt2 = test2.replaceAll("[0-9]+", " ");
+        System.out.println(tt2);
     }
 
 }

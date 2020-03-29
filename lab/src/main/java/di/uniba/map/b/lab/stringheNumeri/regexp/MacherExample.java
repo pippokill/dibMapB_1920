@@ -23,25 +23,40 @@ import java.util.regex.Pattern;
  *
  * @author pierpaolo
  */
-public class GroupExample {
+public class MacherExample {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Pattern pattern = Pattern.compile("[a-zA-Z]+");
+        System.out.println("=== Es. MATCHES ===");
+        Matcher matcher1 = pattern.matcher("dlkflsASDaslsdSD");
+        //deve corrispondere l'intera stringa
+        System.out.println(matcher1.matches());
+        System.out.println("=== Es. LOOKINGAT ===");
+        Matcher matcher2 = pattern.matcher("dlkflsASDaslsdSD 8798767");
+        //la corrispondenza deve partire dall'inizio ma non è necessario che corrisponda l'intera stringa
+        System.out.println(matcher2.lookingAt());
+        System.out.println("=== Es. FIND ===");
+        Matcher matcher3 = pattern.matcher("dlkflsASDaslsdSD");
+        while (matcher3.find()) {
+            System.out.println(matcher3.group() + ": " + matcher3.start() + "-" + matcher3.end());
+        }
+        System.out.println("=== Es. FIND/GROUP ===");
         //una sequenza di numeri seguita da 1 o massimo 3 lettere minuscole
         String regexp = "([0-9]+)([a-z]{1,3})";
-        Pattern pattern = Pattern.compile(regexp);
+        Pattern pattern2 = Pattern.compile(regexp);
         String str = "9843989jf 39203920jie 32122i";
-        Matcher matcher = pattern.matcher(str);
-        while (matcher.find()) { //cicla sui match
-            int gc = matcher.groupCount(); //restituisce il numero di gruppi
+        Matcher matcher4 = pattern2.matcher(str);
+        while (matcher4.find()) { //cicla sui match
+            int gc = matcher4.groupCount(); //restituisce il numero di gruppi
             //il gruppo 0 corrisponde all'intero matching
             for (int i = 0; i <= gc; i++) {
-                System.out.println(matcher.group(i));
+                System.out.println(matcher4.group(i) + ": " + matcher4.start(i) + "-" + matcher4.end(i));
             }
             System.out.println();
         }
     }
-
+    
 }
