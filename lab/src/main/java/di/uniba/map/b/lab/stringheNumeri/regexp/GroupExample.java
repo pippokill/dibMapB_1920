@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package di.uniba.map.b.lab.stringheNumeri;
+package di.uniba.map.b.lab.stringheNumeri.regexp;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,24 +23,24 @@ import java.util.regex.Pattern;
  *
  * @author pierpaolo
  */
-public class RegExp {
+public class GroupExample {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String test = "pippo..pi@topolino.it";
-        //System.out.println(test.matches("[A-Za-z][\\w]+\\.[A-Za-z][\\w]+@[\\w]+\\.[A-Za-z]{2,3}"));
-        System.out.println(test.matches("[a-zA-Z][a-z0-9]+(\\.)?[a-z0-9]+[@][a-z0-9]+\\.(com|it|org)"));
-        String test1="sdfkljsd lkjsd fkl    lksdjf   fslkdjf f  fsldkj";
-        String[] split = test1.split("\\s+");
-        for (String s:split) {
-            System.out.println(s);
-        }
-        Pattern pattern = Pattern.compile("[a-zA-Z]+");
-        Matcher matcher = pattern.matcher("lsdkjfdskl 32lk4j 23kl4 k3l24j 3k2l4 lk32");
-        while (matcher.find()) {
-            System.out.println(matcher.start()+"-"+matcher.end());
+        //una sequenza di numeri seguita da 1 o massimo 3 lettere minuscole
+        String regexp = "([0-9]+)([a-z]{1,3})";
+        Pattern pattern = Pattern.compile(regexp);
+        String str = "9843989jf 39203920jie 32122i";
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()) { //cicla sui match
+            int gc = matcher.groupCount(); //restituisce il numero di gruppi
+            //il gruppo 0 corrisponde all'intero matching
+            for (int i = 0; i <= gc; i++) {
+                System.out.println(matcher.group(i));
+            }
+            System.out.println();
         }
     }
 
