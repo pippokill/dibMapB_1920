@@ -47,10 +47,11 @@ public class Holder<T> {
         Holder<Apple> apple = new Holder<Apple>(new Apple());
         Apple d = apple.get();
         apple.set(d);
-        // Holder<Fruit> fruit = apple; // Cannot upcast
+        //Holder<Fruit> fruit = apple; // Cannot upcast
+        Holder<Orange> orange = new Holder<>(new Orange());
         Holder<? extends Fruit> fruit = apple; // OK Apple è sottoclasse di Fruit
-        Fruit p = fruit.get();
-        d = (Apple) fruit.get(); // Returns 'Fruit'
+        //Fruit p = fruit.get();
+        //d = (Apple) fruit.get(); // Returns 'Fruit'
         try {
             Orange c = (Orange) fruit.get(); // No warning
         } catch (Exception e) {

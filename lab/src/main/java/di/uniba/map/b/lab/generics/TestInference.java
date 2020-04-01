@@ -23,25 +23,16 @@ import java.util.List;
  *
  * @author pierpaolo
  */
-public class CovariantArrays {
+public class TestInference {
 
+    /**
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
-        Fruit[] fruit = new Apple[10];
-        fruit[0] = new Apple(); // OK
-        fruit[1] = new Jonathan(); // OK
-        // Runtime type is Apple[], not Fruit[] or Orange[]
-        try {
-            // Compiler allows you to add Fruit:
-            fruit[0] = new Fruit(); // ArrayStoreException
-            //errore a run-time, ma non a compile-time
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        try {
-            // Compiler allows you to add Oranges:
-            fruit[0] = new Orange(); // ArrayStoreException
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        List<String> ls=new ArrayList();
+        ls.add("pippo");
+        Class c=ArrayList.class;
+        System.out.println(c.getName());
     }
+    
 }

@@ -28,11 +28,11 @@ import java.util.Map;
 public class New {
 
     public static <K, V> Map<K, V> map() {
-        return new HashMap<K, V>();
+        return new HashMap<>();
     }
 
     public static <T> List<T> list() {
-        return new ArrayList<T>();
+        return new ArrayList<>();
     }
 
     public static void main(String[] args) {

@@ -26,7 +26,7 @@ import java.util.List;
 public class GenericVarargs {
 
     public static <T> List<T> makeList(T... args) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         for (T item : args) {
             result.add(item);
         }
@@ -40,5 +40,7 @@ public class GenericVarargs {
         System.out.println(ls);
         ls = makeList("ABCDEFFHIJKLMNOPQRSTUVWXYZ".split(""));
         System.out.println(ls);
+        List<Integer> li = makeList(1, 4, 32);
+        System.out.println(li);
     }
 }
