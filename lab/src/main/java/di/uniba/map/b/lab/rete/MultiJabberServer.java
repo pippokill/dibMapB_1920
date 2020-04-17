@@ -38,7 +38,7 @@ public class MultiJabberServer {
                 Socket socket = s.accept();
                 Thread t = new RequestThread(socket, "request-" + r);
                 r++;
-                t.run();
+                t.start();
             }
         } finally {
             s.close();
