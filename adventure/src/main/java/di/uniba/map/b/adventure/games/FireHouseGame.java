@@ -16,6 +16,16 @@ import java.io.PrintStream;
 import java.util.Iterator;
 
 /**
+ * ATTENZIONE: La descrizione del gioco è fatta in modo che qualsiasi gioco
+ * debba estendere la classe GameDescription. L'Engine è fatto in modo che posso
+ * eseguire qualsiasi gioco che estende GameDescription, in questo modo si
+ * possono creare più gioci utilizzando lo stesso Engine.
+ *
+ * Diverse migliorie possono essere applicati: - la descrizione del gioco
+ * potrebbe essere caricate da file o da DBMS in modo da non modificare il
+ * codice sorgente - l'utilizzo di file e DBMS non è semplice poiché all'interno
+ * del file o del DBMS dovrebbe anche essere codificata la logica del gioco
+ * (nextMove) oltre alla descrizione di stanze, oggetti, ecc...
  *
  * @author pierpaolo
  */
@@ -40,7 +50,7 @@ public class FireHouseGame extends GameDescription {
         ovest.setAlias(new String[]{"o", "O", "Ovest", "OVEST"});
         getCommands().add(ovest);
         Command end = new Command(CommandType.END, "end");
-        end.setAlias(new String[]{"end", "fine", "esci", "muori", "ammazzati", "ucciditi", "suicidati"});
+        end.setAlias(new String[]{"end", "fine", "esci", "muori", "ammazzati", "ucciditi", "suicidati","exit"});
         getCommands().add(end);
         Command look = new Command(CommandType.LOOK_AT, "osserva");
         look.setAlias(new String[]{"guarda", "vedi", "trova", "cerca", "descrivi"});
@@ -51,6 +61,9 @@ public class FireHouseGame extends GameDescription {
         Command open = new Command(CommandType.OPEN, "apri");
         open.setAlias(new String[]{});
         getCommands().add(open);
+        Command push = new Command(CommandType.PUSH, "premi");
+        push.setAlias(new String[]{"spingi","attiva"});
+        getCommands().add(push);
         //Rooms
         Room hall = new Room(0, "Corridoio", "Sei appena tornato a casa e non sai cosa fare. Ti ricordi che non hai ancora aperto quel fantastico regalo di tua zia Lina."
                 + " Sarà il caso di cercarlo e di giocarci!");
@@ -157,6 +170,12 @@ public class FireHouseGame extends GameDescription {
                     out.println("Non c'è niente da raccogliere qui.");
                 }
             } else if (p.getCommand().getType() == CommandType.OPEN) {
+                /*ATTENZIONE: quando un oggetto contenitore viene aperto, tutti gli oggetti contenuti
+                * vengongo inseriti nella stanza o nell'inventario a seconda di dove si trova l'oggetto contenitore.
+                * Questa soluzione NON va bene poiché quando un oggetto contenitore viene richiuso è complicato
+                * non rendere più disponibili gli oggetti contenuti rimuovendoli dalla stanza o dall'invetario.
+                * Trovare altra soluzione.
+                 */
                 if (p.getObject() == null && p.getInvObject() == null) {
                     out.println("Non c'è niente da aprire qui.");
                 } else {
@@ -208,14 +227,34 @@ public class FireHouseGame extends GameDescription {
                         }
                     }
                 }
+            } else if (p.getCommand().getType() == CommandType.PUSH) {
+                //ricerca oggetti pushabili
+                if (p.getObject() != null && p.getObject().isPushable()) {
+                    out.println("Hai premuto: " + p.getObject().getName());
+                    if (p.getObject().getId() == 3) {
+                        end(out);
+                    }
+                } else if (p.getInvObject() != null && p.getInvObject().isPushable()) {
+                    out.println("Hai premuto: " + p.getInvObject().getName());
+                    if (p.getInvObject().getId() == 3) {
+                        end(out);
+                    }
+                } else {
+                    out.println("Non ci sono oggetti che puoi premere qui.");
+                }
             }
             if (noroom) {
-                out.println("Da quella parte non si può andare c'è un muro!");
+                out.println("Da quella parte non si può andare c'è un muro! Non hai ancora acquisito i poteri per oltrepassare i muri...");
             } else if (move) {
                 out.println(getCurrentRoom().getName());
                 out.println("================================================");
                 out.println(getCurrentRoom().getDescription());
             }
         }
+    }
+
+    private void end(PrintStream out) {
+        out.println("Premi il pulsante del giocattolo e in seguito ad una forte esplosione la tua casa prende fuoco...tu e tuoi famigliari cercate invano di salvarvi e venite avvolti dalle fiamme...è stata una morte CALOROSA...addio!");
+        System.exit(0);
     }
 }

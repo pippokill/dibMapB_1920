@@ -12,6 +12,9 @@ import di.uniba.map.b.adventure.type.CommandType;
 import java.util.Scanner;
 
 /**
+ * ATTENZIONE: l'Engine è molto spartano, in realtà demanda la logica alla
+ * classe che implementa GameDescription e si occupa di gestire I/O sul
+ * terminale.
  *
  * @author pierpaolo
  */
@@ -21,7 +24,7 @@ public class Engine {
 
     private final Parser parser;
 
-    public Engine(FireHouseGame game) {
+    public Engine(GameDescription game) {
         this.game = game;
         try {
             this.game.init();

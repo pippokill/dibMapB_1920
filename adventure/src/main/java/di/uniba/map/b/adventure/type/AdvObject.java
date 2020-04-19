@@ -123,6 +123,10 @@ public class AdvObject {
         this.alias = new HashSet<>(Arrays.asList(alias));
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
