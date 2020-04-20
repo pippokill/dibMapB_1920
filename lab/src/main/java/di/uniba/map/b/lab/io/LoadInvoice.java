@@ -48,7 +48,10 @@ public class LoadInvoice {
                 total += unit * price;
             }
         } catch (IOException e) {
+        } finally {
+            System.out.println(total);
         }
+        
     }
 
 }
