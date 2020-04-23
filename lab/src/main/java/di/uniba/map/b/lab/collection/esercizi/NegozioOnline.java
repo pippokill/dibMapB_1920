@@ -54,7 +54,7 @@ public class NegozioOnline {
 
     private final Magazzino magazzino;
 
-    private List<Utente> utenti;
+    private final List<Utente> utenti;
 
     public NegozioOnline() {
         magazzino = new Magazzino();

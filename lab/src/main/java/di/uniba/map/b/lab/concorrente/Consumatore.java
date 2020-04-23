@@ -52,7 +52,7 @@ public class Consumatore extends Thread {
                     try {
                         writer.append(element).append("\n");
                     } catch (IOException ex) {
-                        System.err.println("[" + getName() + "] Erroro di I/O: " + ex.getMessage());
+                        System.err.println("[" + getName() + "] Errore di I/O: " + ex.getMessage());
                         run = false;
                     }
                 }

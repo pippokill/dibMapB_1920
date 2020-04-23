@@ -34,8 +34,6 @@ public class Produttore extends Thread {
 
     private final BlockingQueue<String> queue;
 
-    private boolean run = true;
-
     public Produttore(BlockingQueue<String> queue, int np) {
         setName("Produttore");
         this.queue = queue;

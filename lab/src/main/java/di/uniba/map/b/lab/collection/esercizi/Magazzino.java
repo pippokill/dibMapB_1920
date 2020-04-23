@@ -73,7 +73,7 @@ public class Magazzino {
     }
 
     public boolean disopnibile(Articolo articolo) {
-        return disopnibile(articolo);
+        return disopnibile(articolo, 1);
     }
 
     public boolean calcolaCarrello(Carrello carrello, Utente utente) {
