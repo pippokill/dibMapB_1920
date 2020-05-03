@@ -16,6 +16,25 @@
  */
 package di.uniba.map.b.lab.swing;
 
+import java.awt.Event;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Keymap;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+
 /**
  *
  * @author pierpaolo
@@ -27,6 +46,110 @@ public class Editor extends javax.swing.JFrame {
      */
     public Editor() {
         initComponents();
+        init();
+    }
+
+    private void init() {
+        initActionTable();
+        undoAction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Undo16.gif"));
+        undoAction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Undo24.gif"));
+        jmEdit.add(undoAction);
+        jToolBar1.add(undoAction);
+        redoAction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Redo16.gif"));
+        redoAction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Redo24.gif"));
+        jmEdit.add(redoAction);
+        jToolBar1.add(redoAction);
+        jmEdit.add(new JSeparator());
+        jToolBar1.add(new JSeparator());
+        Action cutaction = getEditorActionByName(DefaultEditorKit.cutAction);
+        cutaction.putValue(Action.NAME, "Cut");
+        cutaction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Cut16.gif"));
+        cutaction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Cut24.gif"));
+        jmEdit.add(cutaction);
+        jToolBar1.add(cutaction);
+        Action copyaction = getEditorActionByName(DefaultEditorKit.copyAction);
+        copyaction.putValue(Action.NAME, "Copy");
+        copyaction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Copy16.gif"));
+        copyaction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Copy24.gif"));
+        jmEdit.add(copyaction);
+        jToolBar1.add(copyaction);
+        Action pasteaction = getEditorActionByName(DefaultEditorKit.pasteAction);
+        pasteaction.putValue(Action.NAME, "Cut");
+        pasteaction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Paste16.gif"));
+        pasteaction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Paste24.gif"));
+        jmEdit.add(pasteaction);
+        jToolBar1.add(pasteaction);
+
+        Keymap keymap = jepMain.getKeymap();
+        KeyStroke keydown = KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK);
+        keymap.addActionForKeyStroke(keydown, getEditorActionByName(DefaultEditorKit.downAction));
+        KeyStroke keyup = KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK);
+        keymap.addActionForKeyStroke(keyup, getEditorActionByName(DefaultEditorKit.upAction));
+        
+        jepMain.getDocument().addUndoableEditListener(new MyUndoableEditListener());
+    }
+
+    private Map<Object, Action> editorActionTable;
+
+    private void initActionTable() {
+        editorActionTable = new HashMap<>();
+        Action[] actions = jepMain.getActions();
+        for (Action action : actions) {
+            editorActionTable.put(action.getValue(Action.NAME), action);
+        }
+    }
+
+    private Action getEditorActionByName(String action) {
+        return editorActionTable.get(action);
+    }
+
+    protected UndoManager undo = new UndoManager();
+
+    protected UndoAction undoAction = new UndoAction("Undo");
+
+    protected RedoAction redoAction = new RedoAction("Redo");
+
+    protected class MyUndoableEditListener implements UndoableEditListener {
+
+        @Override
+        public void undoableEditHappened(UndoableEditEvent e) {
+            undo.addEdit(e.getEdit());
+        }
+
+    }
+
+    protected class UndoAction extends AbstractAction {
+
+        public UndoAction(String name) {
+            super(name);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                undo.undo();
+            } catch (CannotUndoException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Undo exception", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
+
+    protected class RedoAction extends AbstractAction {
+
+        public RedoAction(String name) {
+            super(name);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                undo.redo();
+            } catch (CannotRedoException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Redo exception", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
     }
 
     /**
@@ -39,25 +162,30 @@ public class Editor extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        jepMain = new javax.swing.JEditorPane();
+        jToolBar1 = new javax.swing.JToolBar();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        jmFile = new javax.swing.JMenu();
+        jmEdit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Editor");
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 400));
-        jScrollPane1.setViewportView(jEditorPane1);
+        jScrollPane1.setViewportView(jepMain);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jMenu1.setText("File");
-        jMenu1.setToolTipText("");
-        jMenuBar1.add(jMenu1);
+        jToolBar1.setFloatable(false);
+        jToolBar1.setRollover(true);
+        getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        jmFile.setText("File");
+        jmFile.setToolTipText("");
+        jMenuBar1.add(jmFile);
+
+        jmEdit.setText("Edit");
+        jMenuBar1.add(jmEdit);
 
         setJMenuBar(jMenuBar1);
 
@@ -100,10 +228,11 @@ public class Editor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JEditorPane jepMain;
+    private javax.swing.JMenu jmEdit;
+    private javax.swing.JMenu jmFile;
     // End of variables declaration//GEN-END:variables
 }
