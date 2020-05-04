@@ -19,17 +19,26 @@ package di.uniba.map.b.lab.swing;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
 import javax.swing.text.Keymap;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -74,7 +83,7 @@ public class Editor extends javax.swing.JFrame {
         jmEdit.add(copyaction);
         jToolBar1.add(copyaction);
         Action pasteaction = getEditorActionByName(DefaultEditorKit.pasteAction);
-        pasteaction.putValue(Action.NAME, "Cut");
+        pasteaction.putValue(Action.NAME, "Paste");
         pasteaction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Paste16.gif"));
         pasteaction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Paste24.gif"));
         jmEdit.add(pasteaction);
@@ -85,8 +94,9 @@ public class Editor extends javax.swing.JFrame {
         keymap.addActionForKeyStroke(keydown, getEditorActionByName(DefaultEditorKit.downAction));
         KeyStroke keyup = KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK);
         keymap.addActionForKeyStroke(keyup, getEditorActionByName(DefaultEditorKit.upAction));
-        
+
         jepMain.getDocument().addUndoableEditListener(new MyUndoableEditListener());
+        jepMain.getDocument().addDocumentListener(new MyDocumentListener());
     }
 
     private Map<Object, Action> editorActionTable;
@@ -152,6 +162,31 @@ public class Editor extends javax.swing.JFrame {
 
     }
 
+    protected class MyDocumentListener implements DocumentListener {
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            displayEditInfo(e);
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            displayEditInfo(e);
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            displayEditInfo(e);
+        }
+
+        private void displayEditInfo(DocumentEvent e) {
+            Document document = e.getDocument();
+            int length = e.getLength();
+            System.out.println(e.getType() + ": " + length + ", " + document.getLength());
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -166,6 +201,10 @@ public class Editor extends javax.swing.JFrame {
         jToolBar1 = new javax.swing.JToolBar();
         jMenuBar1 = new javax.swing.JMenuBar();
         jmFile = new javax.swing.JMenu();
+        jmiOpen = new javax.swing.JMenuItem();
+        jmiSave = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jmiExit = new javax.swing.JMenuItem();
         jmEdit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -176,12 +215,32 @@ public class Editor extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
         getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         jmFile.setText("File");
         jmFile.setToolTipText("");
+
+        jmiOpen.setText("Open...");
+        jmiOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiOpenActionPerformed(evt);
+            }
+        });
+        jmFile.add(jmiOpen);
+
+        jmiSave.setText("Save...");
+        jmiSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiSaveActionPerformed(evt);
+            }
+        });
+        jmFile.add(jmiSave);
+        jmFile.add(jSeparator1);
+
+        jmiExit.setText("Exit");
+        jmFile.add(jmiExit);
+
         jMenuBar1.add(jmFile);
 
         jmEdit.setText("Edit");
@@ -191,6 +250,44 @@ public class Editor extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jmiOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiOpenActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        fc.setMultiSelectionEnabled(false);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                StringBuilder sb = new StringBuilder();
+                while (reader.ready()) {
+                    sb.append(reader.readLine());
+                    sb.append("\n");
+                }
+                reader.close();
+                jepMain.setText(sb.toString());
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "I/O Error: " + ex.getMessage(), "Error open file", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jmiOpenActionPerformed
+
+    private void jmiSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSaveActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setMultiSelectionEnabled(false);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+                FileWriter writer = new FileWriter(file);
+                writer.append(jepMain.getText());
+                writer.close();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "I/O Error: " + ex.getMessage(), "Error save file", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jmiSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -230,9 +327,13 @@ public class Editor extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JEditorPane jepMain;
     private javax.swing.JMenu jmEdit;
     private javax.swing.JMenu jmFile;
+    private javax.swing.JMenuItem jmiExit;
+    private javax.swing.JMenuItem jmiOpen;
+    private javax.swing.JMenuItem jmiSave;
     // End of variables declaration//GEN-END:variables
 }
