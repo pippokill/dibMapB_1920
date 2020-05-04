@@ -60,6 +60,11 @@ public class Editor extends javax.swing.JFrame {
 
     private void init() {
         initActionTable();
+        Action newAction=new NewAction("New");
+        newAction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/New16.gif"));
+        newAction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/New24.gif"));
+        jmiNew.setAction(newAction);
+        jToolBar1.add(newAction);
         undoAction.putValue(Action.SMALL_ICON, new ImageIcon("img/general/Undo16.gif"));
         undoAction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Undo24.gif"));
         jmEdit.add(undoAction);
@@ -88,7 +93,6 @@ public class Editor extends javax.swing.JFrame {
         pasteaction.putValue(Action.LARGE_ICON_KEY, new ImageIcon("img/general/Paste24.gif"));
         jmEdit.add(pasteaction);
         jToolBar1.add(pasteaction);
-
         Keymap keymap = jepMain.getKeymap();
         KeyStroke keydown = KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK);
         keymap.addActionForKeyStroke(keydown, getEditorActionByName(DefaultEditorKit.downAction));
@@ -180,9 +184,38 @@ public class Editor extends javax.swing.JFrame {
         }
 
         private void displayEditInfo(DocumentEvent e) {
+            saved = false;
             Document document = e.getDocument();
             int length = e.getLength();
-            System.out.println(e.getType() + ": " + length + ", " + document.getLength());
+            System.out.println(e.getType() + ": " + length + ", " + document.getLength()+"\tsaved: "+saved);
+        }
+
+    }
+
+    private boolean saved = true;
+
+    protected class NewAction extends AbstractAction {
+
+        public NewAction(String name) {
+            super(name);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!saved) {
+                int option = JOptionPane.showConfirmDialog(null, "Not saved. Are you sure?", "New document", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    jepMain.setText("");
+                    saved = true;
+                } else if (option == JOptionPane.NO_OPTION) {
+                    jmiSaveActionPerformed(e);
+                } else if (option == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
+            } else {
+                jepMain.setText("");
+                saved = true;
+            }
         }
 
     }
@@ -201,6 +234,7 @@ public class Editor extends javax.swing.JFrame {
         jToolBar1 = new javax.swing.JToolBar();
         jMenuBar1 = new javax.swing.JMenuBar();
         jmFile = new javax.swing.JMenu();
+        jmiNew = new javax.swing.JMenuItem();
         jmiOpen = new javax.swing.JMenuItem();
         jmiSave = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -220,6 +254,9 @@ public class Editor extends javax.swing.JFrame {
 
         jmFile.setText("File");
         jmFile.setToolTipText("");
+
+        jmiNew.setText("jMenuItem1");
+        jmFile.add(jmiNew);
 
         jmiOpen.setText("Open...");
         jmiOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -283,6 +320,7 @@ public class Editor extends javax.swing.JFrame {
                 FileWriter writer = new FileWriter(file);
                 writer.append(jepMain.getText());
                 writer.close();
+                saved = true;
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "I/O Error: " + ex.getMessage(), "Error save file", JOptionPane.ERROR_MESSAGE);
             }
@@ -333,6 +371,7 @@ public class Editor extends javax.swing.JFrame {
     private javax.swing.JMenu jmEdit;
     private javax.swing.JMenu jmFile;
     private javax.swing.JMenuItem jmiExit;
+    private javax.swing.JMenuItem jmiNew;
     private javax.swing.JMenuItem jmiOpen;
     private javax.swing.JMenuItem jmiSave;
     // End of variables declaration//GEN-END:variables
