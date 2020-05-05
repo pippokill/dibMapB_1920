@@ -32,6 +32,27 @@ import java.util.Scanner;
  */
 public class MessengerClient {
 
+    private static class ClientThread extends Thread {
+
+        private final BufferedReader in;
+
+        public ClientThread(BufferedReader in) {
+            this.in = in;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    System.out.println(in.readLine());
+                } catch (IOException ex) {
+                    System.err.println(ex);
+                }
+            }
+        }
+
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -59,17 +80,16 @@ public class MessengerClient {
                     user = null;
                 }
             } while (user == null);
-            boolean run = true;
-            do {
-                System.out.println("Inserisci un comando");
+            Thread t = new ClientThread(in);
+            t.start();
+            while (true) {
                 String cmd = scanner.nextLine();
                 if (cmd.equals("#exit")) {
-                    run = false;
+                    System.exit(0);
                 } else {
                     out.println(cmd);
-                    System.out.println(in.readLine());
                 }
-            } while (run);
+            }
         } finally {
             System.out.println("closing...");
             socket.close();

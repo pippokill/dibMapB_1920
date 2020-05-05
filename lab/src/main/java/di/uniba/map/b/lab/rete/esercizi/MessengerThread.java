@@ -23,8 +23,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -62,28 +60,30 @@ public class MessengerThread extends Thread {
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
             while (true) {
                 String str = in.readLine();
-                if (str.startsWith("#name")) {
-                    String name = str.substring(str.indexOf(" ")).trim();
-                    try {
-                        md.addUser(name, this);
-                    } catch (Exception ex) {
-                        out.println("#error " + ex.getMessage());
-                    }
-                    out.println("#ok");
-                } else if (str.startsWith("#send")) {
-                    int idx1 = str.indexOf(" ");
-                    int idx2 = str.indexOf(" ", idx1 + 1);
-                    String name = str.substring(idx1, idx2).trim();
+                if (str != null) {
+                    if (str.startsWith("#name")) {
+                        String name = str.substring(str.indexOf(" ")).trim();
+                        try {
+                            md.addUser(name, this);
+                            out.println("#ok");
+                        } catch (Exception ex) {
+                            out.println("#error " + ex.getMessage());
+                        }
+                    } else if (str.startsWith("#send")) {
+                        int idx1 = str.indexOf(" ");
+                        int idx2 = str.indexOf(" ", idx1 + 1);
+                        String name = str.substring(idx1, idx2).trim();
 
-                    String msg = str.substring(idx2).trim();
-                    try {
-                        md.sendMessage(name, msg);
-                    } catch (Exception ex) {
-                        out.println("#error " + ex.getMessage());
+                        String msg = str.substring(idx2).trim();
+                        try {
+                            md.sendMessage(name, msg);
+                            out.println("#ok");
+                        } catch (Exception ex) {
+                            out.println("#error " + ex.getMessage());
+                        }
+                    } else {
+                        out.println("#error Comando sconosciuto");
                     }
-                    out.println("#ok");
-                } else {
-                    out.println("#error Comando sconosciuto");
                 }
             }
         } catch (IOException ex) {
