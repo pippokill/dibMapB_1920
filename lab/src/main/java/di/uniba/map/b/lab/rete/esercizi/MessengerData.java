@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class MessengerData {
 
-    private Map<String, MessengerThread> clients = new HashMap<>();
+    private final Map<String, MessengerThread> clients = new HashMap<>();
 
     public synchronized void addUser(String username, MessengerThread thread) throws Exception {
         if (clients.containsKey(username)) {
@@ -41,6 +41,14 @@ public class MessengerData {
             t.sendMessage(message);
         } else {
             throw new Exception("L'utente non esiste");
+        }
+    }
+
+    public synchronized void removeUser(String username) throws Exception {
+        if (clients.containsKey(username)) {
+            clients.remove(username);
+        } else {
+            throw new Exception("Utente inesistente");
         }
     }
 

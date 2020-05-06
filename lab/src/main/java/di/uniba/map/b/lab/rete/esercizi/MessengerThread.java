@@ -81,6 +81,14 @@ public class MessengerThread extends Thread {
                         } catch (Exception ex) {
                             out.println("#error " + ex.getMessage());
                         }
+                    } else if (str.startsWith("#remove")) {
+                        String name = str.substring(str.indexOf(" ")).trim();
+                        try {
+                            md.removeUser(name);
+                            out.println("#ok");
+                        } catch (Exception ex) {
+                            out.println("#error " + ex.getMessage());
+                        }
                     } else {
                         out.println("#error Comando sconosciuto");
                     }
