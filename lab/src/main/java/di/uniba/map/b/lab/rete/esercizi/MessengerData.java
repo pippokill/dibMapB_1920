@@ -44,6 +44,15 @@ public class MessengerData {
         }
     }
 
+    public synchronized void sendMessage(String sender, String username, String message) throws Exception {
+        MessengerThread t = clients.get(username);
+        if (t != null) {
+            t.sendMessage(sender + ": " + message);
+        } else {
+            throw new Exception("L'utente non esiste");
+        }
+    }
+
     public synchronized void removeUser(String username) throws Exception {
         if (clients.containsKey(username)) {
             clients.remove(username);

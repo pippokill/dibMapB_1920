@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -31,6 +33,10 @@ import java.net.Socket;
 public class MessengerThread extends Thread {
 
     private final Socket socket;
+
+    private boolean run = true;
+
+    private String username;
 
     private final MessengerData md;
 
@@ -58,37 +64,63 @@ public class MessengerThread extends Thread {
             System.out.println("Connessione accettata: " + socket);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            while (true) {
+            while (run) {
                 String str = in.readLine();
                 if (str != null) {
-                    if (str.startsWith("#name")) {
-                        String name = str.substring(str.indexOf(" ")).trim();
+                    str = str.trim();
+                    Pattern pattern = Pattern.compile("\\S+");
+                    Matcher matcher = pattern.matcher(str);
+                    boolean findcmd = matcher.find();
+                    if (findcmd && matcher.group().equalsIgnoreCase("#name")) {
+                        if (matcher.find()) {
+                            String name = matcher.group();
+                            try {
+                                md.addUser(name, this);
+                                out.println("#ok");
+                                username = name;
+                            } catch (Exception ex) {
+                                out.println("#error " + ex.getMessage());
+                            }
+                        }
+                    } else if (findcmd && matcher.group().equalsIgnoreCase("#send")) {
+                        String name = null;
+                        String msg = null;
+                        if (matcher.find()) {
+                            name = matcher.group();
+                            if (matcher.end() < str.length()) {
+                                msg = str.substring(matcher.end()).trim();
+                            }
+                        }
+                        if (name != null && msg != null) {
+                            try {
+                                if (username != null) {
+                                    md.sendMessage(username, name, msg);
+                                } else {
+                                    md.sendMessage(name, msg);
+                                }
+                                out.println("#ok");
+                            } catch (Exception ex) {
+                                out.println("#error " + ex.getMessage());
+                            }
+                        }
+                    } else if (findcmd && matcher.group().equalsIgnoreCase("#remove")) {
+                        String name = null;
+                        if (matcher.find()) {
+                            name = matcher.group();
+                        }
                         try {
-                            md.addUser(name, this);
-                            out.println("#ok");
+                            if (name != null) {
+                                md.removeUser(name);
+                                out.println("#ok");
+                            } else if (username != null) {
+                                md.removeUser(username);
+                                out.println("#ok");
+                            }
                         } catch (Exception ex) {
                             out.println("#error " + ex.getMessage());
                         }
-                    } else if (str.startsWith("#send")) {
-                        int idx1 = str.indexOf(" ");
-                        int idx2 = str.indexOf(" ", idx1 + 1);
-                        String name = str.substring(idx1, idx2).trim();
-
-                        String msg = str.substring(idx2).trim();
-                        try {
-                            md.sendMessage(name, msg);
-                            out.println("#ok");
-                        } catch (Exception ex) {
-                            out.println("#error " + ex.getMessage());
-                        }
-                    } else if (str.startsWith("#remove")) {
-                        String name = str.substring(str.indexOf(" ")).trim();
-                        try {
-                            md.removeUser(name);
-                            out.println("#ok");
-                        } catch (Exception ex) {
-                            out.println("#error " + ex.getMessage());
-                        }
+                    } else if (findcmd && matcher.group().equalsIgnoreCase("#exit")) {
+                        run = false;
                     } else {
                         out.println("#error Comando sconosciuto");
                     }

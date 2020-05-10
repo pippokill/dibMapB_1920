@@ -86,6 +86,8 @@ public class MessengerClient {
                 String cmd = scanner.nextLine();
                 if (cmd.equals("#exit")) {
                     out.println("#remove " + user);
+                    out.println(cmd);
+                    socket.close();
                     System.exit(0);
                 } else {
                     out.println(cmd);

@@ -29,6 +29,7 @@ public class MessengerServer {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         MessengerData md = new MessengerData();
