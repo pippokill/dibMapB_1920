@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package di.uniba.map.b.lab.lambda.esercizio;
+package di.uniba.map.b.lab.lambda.esercizi;
 
 import di.uniba.map.b.lab.dataset.movielens.Movielens;
 import java.io.File;

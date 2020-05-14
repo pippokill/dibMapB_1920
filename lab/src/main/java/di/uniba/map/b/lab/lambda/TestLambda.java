@@ -123,7 +123,9 @@ public class TestLambda {
         persons.add(new Person("Maria", "Rossi", 19, Person.Gender.FEMALE));
         persons.add(new Person("Francesca", "Verdi", 19, Person.Gender.FEMALE));
         persons.add(new Person("Anna", "Bianchi", 19, Person.Gender.FEMALE));
+        //search persons older than
         printPersonsOlderThan(persons, 18);
+        //search persons within age range
         printPersonsWithinAgeRange(persons, 0, 18);
         //create a new instance of ChechPerson
         printPersons(persons, new CheckPersonEligibleForSelectiveService());
