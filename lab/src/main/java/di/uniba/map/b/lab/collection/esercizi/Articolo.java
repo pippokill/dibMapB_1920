@@ -108,4 +108,8 @@ public class Articolo {
         return "Articolo{" + "id=" + id + ", descrizione=" + descrizione + ", costoUnitario=" + costoUnitario + ", pesoGrammi=" + pesoGrammi + '}';
     }
 
+    public String toPrettyString() {
+        return id + ": " + descrizione + ", " + costoUnitario + "€ , " + pesoGrammi + "gr.";
+    }
+
 }
